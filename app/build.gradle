@@ -1,0 +1,52 @@
+import cn.kato.ConfigData
+import cn.kato.Deps
+
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-kapt")
+}
+
+android {
+    compileSdkVersion(ConfigData.compileSdkVersion)
+    buildToolsVersion(ConfigData.buildToolsVersion)
+
+    defaultConfig {
+        applicationId       ConfigData.applicationId
+        minSdkVersion       ConfigData.minSdkVersion
+        targetSdkVersion    ConfigData.targetSdkVersion
+        versionName         ConfigData.versionName
+        versionCode         ConfigData.versionCode
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        dataBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation(Deps.coreKtx)
+    implementation(Deps.appCompat)
+    implementation(Deps.materialDesign)
+    implementation(Deps.constraintLayout)
+
+    // viewModel
+    implementation(Deps.viewModel)
+    // liveData
+    implementation(Deps.liveData)
+    implementation(Deps.activityKtx)
+    implementation(Deps.swiperefreshlayout)
+}
