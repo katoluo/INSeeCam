@@ -9,6 +9,9 @@ object Versions {
     const val liveData = "2.4.0"
     const val activityKtx = "1.4.0"
     const val swiperefreshlayout = "1.1.0"
+    const val immersionbar = "3.0.0"
+    const val permissionx = "1.6.1"
+    const val timber = "5.0.1"
 }
 
 @Suppress("unused")

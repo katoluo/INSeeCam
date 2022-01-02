@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="wifiBean"
+            type="cn.kato.inseecam.ui.component.devices.WifiBean" />
+        <variable
+            name="viewModel"
+            type="cn.kato.inseecam.ui.component.devices.DeviceListViewModel" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_150"
+        android:foreground="?attr/selectableItemBackground"
+        android:focusable="true"
+        android:clickable="true"
+        android:onClick="@{() -> viewModel.clickItem(wifiBean)}"
+        android:onLongClick="@{() -> viewModel.longClickItem(wifiBean)}"
+        app:cardBackgroundColor="#535353"
+        android:layout_marginBottom="@dimen/dp_6"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        app:cardCornerRadius="@dimen/dp_10">
+
+        <ImageView
+            android:id="@+id/device_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:src="@drawable/device_list_item_camera" />
+
+        <TextView
+            android:id="@+id/device_item_ssid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="WFS-android"
+            android:text="@{wifiBean.ssid}"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:layout_gravity="bottom"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:id="@+id/device_item_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="WPA/WPA2"
+            android:text="@{String.valueOf(wifiBean.auth)}"
+            android:textColor="@color/white"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:id="@+id/device_item_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="90"
+            android:text="@{String.valueOf(wifiBean.signal)}"
+            android:textColor="@color/white"
+            android:layout_margin="10dp" />
+
+    </androidx.cardview.widget.CardView>
+</layout>

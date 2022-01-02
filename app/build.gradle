@@ -1,5 +1,6 @@
 import cn.kato.ConfigData
 import cn.kato.Deps
+import cn.kato.ThirdParty
 
 plugins {
     id("com.android.application")
@@ -18,7 +19,15 @@ android {
         versionName         ConfigData.versionName
         versionCode         ConfigData.versionCode
     }
-
+    sourceSets {
+        main {
+            // res 资源目录设置
+            res.srcDirs(
+                    'src/main/res',
+                    'src/main/res-sw',
+            )
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -35,9 +44,17 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    // 代码警告配置
+    lintOptions {
+        // 禁用文本硬编码警告
+        disable "HardcodedText"
+        // 禁用图片描述警告
+        disable "ContentDescription"
+    }
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation(Deps.coreKtx)
     implementation(Deps.appCompat)
     implementation(Deps.materialDesign)
@@ -49,4 +66,13 @@ dependencies {
     implementation(Deps.liveData)
     implementation(Deps.activityKtx)
     implementation(Deps.swiperefreshlayout)
+
+    // 沉浸式状态栏
+    implementation(ThirdParty.immersionBar)
+    implementation(ThirdParty.immersionBarComponents)
+    implementation(ThirdParty.immersionBarKtx)
+    // 权限申请 郭霖大神 https://github.com/guolindev/PermissionX
+    implementation(ThirdParty.permissionx)
+    // 日志打印
+    implementation(ThirdParty.timber)
 }
