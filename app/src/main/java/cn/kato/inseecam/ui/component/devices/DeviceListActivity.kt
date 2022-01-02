@@ -17,6 +17,7 @@ import cn.kato.inseecam.R
 import cn.kato.inseecam.databinding.DeviceListActivityBinding
 import cn.kato.inseecam.utils.DoubleClickUtils
 import cn.kato.inseecam.utils.showShort
+import com.afollestad.materialdialogs.MaterialDialog
 import com.gyf.immersionbar.ktx.immersionBar
 import com.permissionx.guolindev.PermissionX
 import timber.log.Timber
@@ -36,29 +37,35 @@ class DeviceListActivity : AppCompatActivity(R.layout.device_list_activity), Swi
     private val _wifiReceive = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION -> getScanResults()
+                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION -> getScanResults(
+                    // api23及以上，包含这个额外数据来指明此次扫描是否成功
+                    intent.getBooleanExtra(
+                        WifiManager.EXTRA_RESULTS_UPDATED,
+                        false
+                    )
+                )
             }
         }
     }
     /** 创建需要接受的广播过滤器 */
     private fun createIntentFilter() =
-        IntentFilter().apply { addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) }
+        IntentFilter().apply {
+            addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
+        }
 
     /** 获取扫描结果 */
-    private fun getScanResults() {
+    private fun getScanResults(success: Boolean) {
         Timber.d("描扫结束，处理数据")
-        val results = _wifiManager.scanResults
-        val wifiData: MutableList<WifiBean> = mutableListOf()
-        results.forEach {
-            if (it.SSID.isNotEmpty()) {
-                wifiData.add(
-                    WifiBean(
-                        it.SSID, WifiManager.calculateSignalLevel(it.level, 5), it.capabilities.contains("WPA")
-                    )
-                )
+        _viewModel.setWifiData(
+            if (success) {
+                Timber.d("成功获取到新的扫描数据")
+                _wifiManager.scanResults
+            } else {
+                Timber.e("获取扫描数据失败")
+                showShort(this, "扫描失败")
+                null
             }
-        }
-        _viewModel.setWifiData(wifiData)
+        )
         binding.swipe.isRefreshing = false
     }
 
@@ -66,24 +73,11 @@ class DeviceListActivity : AppCompatActivity(R.layout.device_list_activity), Swi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.device_list_activity)
+        binding.viewModel = _viewModel
+        binding.lifecycleOwner = this
 
-        // Toolbar https://blog.csdn.net/jaynm/article/details/106727790
-        // 初始化标题栏菜单和点击事件
-        binding.toolbar.inflateMenu(R.menu.device_list_menu)
-        binding.toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.album -> showShort(this, "Album")
-                R.id.about_app -> showShort(this, "About")
-            }
-            false
-        }
+        initBars()
 
-        // 设置状态栏
-        immersionBar {
-            statusBarDarkFont(true)
-            titleBar(R.id.toolbar)
-            autoDarkModeEnable(true, 0.2f)
-        }
         // 设置下拉刷新事件
         binding.swipe.setOnRefreshListener(this)
         // 创建recyclerView的Adapter
@@ -102,7 +96,16 @@ class DeviceListActivity : AppCompatActivity(R.layout.device_list_activity), Swi
         }
         // 在activity中观察item长按事件
         _viewModel.longClickEvent.observe(this) {
-            showShort(this, "长按了${it.peekContent().ssid}")
+            MaterialDialog(this).show {
+                title(text = it.peekContent().ssid)
+                message(text = "长按了${it.peekContent().ssid}")
+                positiveButton(text = "POSITIVE") {
+                    showShort(this@DeviceListActivity, "点击了积极键")
+                }
+                negativeButton(text = "NEGATIVE") {
+                    showShort(this@DeviceListActivity, "点击了消极键")
+                }
+            }
         }
         // 为recyclerView设置适配器
         binding.recycler.adapter = _adapter
@@ -133,6 +136,26 @@ class DeviceListActivity : AppCompatActivity(R.layout.device_list_activity), Swi
         } else {
             binding.swipe.isRefreshing = false
             requestLocation()
+        }
+    }
+
+    /** 初始化状态栏、标题栏、导航栏 */
+    private fun initBars() {
+        // Toolbar https://blog.csdn.net/jaynm/article/details/106727790
+        // 初始化标题栏菜单和点击事件
+        binding.toolbar.inflateMenu(R.menu.device_list_menu)
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.album -> showShort(this, "Album")
+                R.id.about_app -> showShort(this, "About")
+            }
+            false
+        }
+        // 设置状态栏
+        immersionBar {
+            statusBarDarkFont(true)
+            titleBar(R.id.toolbar)
+            autoDarkModeEnable(true, 0.2f)
         }
     }
 

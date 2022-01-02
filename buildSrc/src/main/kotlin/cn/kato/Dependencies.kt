@@ -12,6 +12,7 @@ object Versions {
     const val immersionbar = "3.0.0"
     const val permissionx = "1.6.1"
     const val timber = "5.0.1"
+    const val materialDialog = "3.3.0"
 }
 
 @Suppress("unused")

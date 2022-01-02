@@ -9,4 +9,6 @@ object ThirdParty {
     const val permissionx = "com.guolindev.permissionx:permissionx:${Versions.permissionx}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+
+    const val materialDialogCore = "com.afollestad.material-dialogs:core:${Versions.materialDialog}"
 }

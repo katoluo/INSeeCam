@@ -73,6 +73,8 @@ dependencies {
     implementation(ThirdParty.immersionBarKtx)
     // 权限申请 郭霖大神 https://github.com/guolindev/PermissionX
     implementation(ThirdParty.permissionx)
-    // 日志打印
+    // 日志打印 https://github.com/JakeWharton/timber
     implementation(ThirdParty.timber)
+    // Material风格的对话框 https://github.com/afollestad/material-dialogs
+    implementation(ThirdParty.materialDialogCore)
 }
