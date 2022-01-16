@@ -4,4 +4,4 @@
 
 [使用 recyclerview 库的 ListAdapter 需要注意的地方](https://blog.csdn.net/willway_wang/article/details/109263647)
 
-
+[Android JNI(一)——NDK与JNI基础](https://www.jianshu.com/p/87ce6f565d37)
